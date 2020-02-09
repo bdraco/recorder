@@ -12,7 +12,8 @@ from homeassistant.const import (
     ATTR_ICON,
     ATTR_UNIT_OF_MEASUREMENT,
     ATTR_DEVICE_CLASS,
-    ATTR_EDITABLE
+    ATTR_EDITABLE,
+    EVENT_STATE_CHANGED
 )
 
 from sqlalchemy import (
@@ -63,7 +64,7 @@ class Events(Base):  # type: ignore
         """Create an event database object from a native event."""
         return Events(
             event_type=event.event_type,
-            event_data=json.dumps(_filter_event_data(event.data), cls=JSONEncoder),
+            event_data=json.dumps(_filter_state_change_event_data(event.data) if event.event_type == EVENT_STATE_CHANGED else event_data, cls=JSONEncoder),
             origin=str(event.origin),
             time_fired=event.time_fired,
             context_id=event.context.id,
@@ -213,7 +214,7 @@ def _filter_attributes(unfiltered_dict):
     return dict([(key, val) for key, val in 
            unfiltered_dict.items() if key not in KEYS_TO_FILTER_FROM_DB]) 
 
-def _filter_event_data(unfiltered_dict):
+def _filter_state_change_event_data(unfiltered_dict):
     """Remove duplicate data and attributes that are unlikely to be needed
     in the database from an event"""
     filtered_dict = unfiltered_dict.copy()
@@ -221,7 +222,6 @@ def _filter_event_data(unfiltered_dict):
         if key in filtered_dict and isinstance(filtered_dict[key],State):
             filtered_dict[key] = filtered_dict[key].as_dict()
             filtered_dict[key]['attributes'] = _filter_attributes(filtered_dict[key]['attributes'])
-            del filtered_dict[key][ATTR_ENTITY_ID]
     return filtered_dict 
 
 def _process_timestamp(ts):
