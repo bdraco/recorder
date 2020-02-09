@@ -64,7 +64,7 @@ class Events(Base):  # type: ignore
         """Create an event database object from a native event."""
         return Events(
             event_type=event.event_type,
-            event_data=json.dumps(_filter_state_change_event_data(event.data) if event.event_type == EVENT_STATE_CHANGED else event_data, cls=JSONEncoder),
+            event_data=json.dumps(_filter_state_change_event_data(event.data) if event.event_type == EVENT_STATE_CHANGED else event.data, cls=JSONEncoder),
             origin=str(event.origin),
             time_fired=event.time_fired,
             context_id=event.context.id,
