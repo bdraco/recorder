@@ -216,8 +216,6 @@ def _filter_attributes(unfiltered_dict):
 def _filter_event_data(unfiltered_dict):
     """Remove duplicate data and attributes that are unlikely to be needed
     in the database from an event"""
-    import pprint
-    _LOGGER.warning("Incoming: %s.", pprint.pformat(unfiltered_dict))
     filtered_dict = unfiltered_dict.copy()
     for key in ("old_state", "new_state"):
         if key in filtered_dict and isinstance(filtered_dict[key],State):
