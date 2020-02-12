@@ -40,7 +40,10 @@ Base = declarative_base()
 SCHEMA_VERSION = 7
 
 # Ideally we would also filter out ATTR_UNIT_OF_MEASUREMENT, however the history api needs this
-# for the computeHistory UI functionality
+# for the computeHistory UI functionality.  Unfortunately that means it has to be stored
+# for every state change.   In the future we might be able to refactor so the system can
+# fetch the current unit of measurement for the entity and mix it in to avoid storing it
+# for every state change
 KEYS_TO_FILTER_FROM_DB = [ATTR_ENTITY_ID, ATTR_AREA_ID, ATTR_ENTITY_PICTURE, ATTR_FRIENDLY_NAME, ATTR_HIDDEN, ATTR_ICON, ATTR_DEVICE_CLASS, ATTR_EDITABLE]
 
 _LOGGER = logging.getLogger(__name__)
